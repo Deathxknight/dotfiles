@@ -2,7 +2,7 @@
 
 My Arch + Hyprland setup. The whole thing is themed from whatever wallpaper Im using: I pick one, [matugen](https://github.com/InioX/matugen) pulls the colours out of it , and everything else follows.
 
-<!-- Add a screenshot here: ![desktop](screenshots/desktop.png) -->
+<img width="1918" height="1076" alt="image" src="https://github.com/user-attachments/assets/b647925d-c181-4d88-a8f4-ee2cba674d38" />
 
 That covers the Quickshell bar, GTK 3/4, Qt (qt5ct, qt6ct, Kvantum), kitty, Neovim, Firefox, Vesktop, Steam (AdwSteamGtk), Walker, OBS, Hyprland, the cursor, and the Papirus folder colours.
 
