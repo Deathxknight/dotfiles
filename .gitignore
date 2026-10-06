@@ -1,0 +1,16 @@
+wallpapers/
+quickshell/plugin/build/
+**/.zcompdump*
+**/*.bak*
+**/*.save
+matugen/.config/matugen/generated/
+nvim/.config/nvim/plugin/matugen-colors.vim
+vesktop/.config/vesktop/themes/matugen.theme.css
+matugen/.config/matugen/cursor-src/
+**/*.pre-*
+**/*.ab-*
+gtk/.config/gtk-3.0/bookmarks
+__pycache__/
+*.pyc
+__pycache__/
+*.pyc

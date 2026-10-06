@@ -1,0 +1,25 @@
+/* ~/.config/matugen/templates/vesktop.css */
+@import url('https://refact0r.github.io/system24/build/system24.css');
+
+:root, :root:root, body, #app-mount {
+    /* Backgrounds */
+    --bg-1: {{colors.surface_container_high.default.hex}};
+    --bg-2: {{colors.surface_container.default.hex}};
+    --bg-3: {{colors.surface_container_low.default.hex}};
+    --bg-4: {{colors.surface.default.hex}};
+    
+    /* Text */
+    --text-1: {{colors.on_surface.default.hex}};
+    --text-2: {{colors.on_surface_variant.default.hex}};
+    --text-3: {{colors.outline.default.hex}};
+    
+    /* Accents */
+    --accent-1: {{colors.primary.default.hex}};
+    --accent-2: {{colors.secondary.default.hex}};
+    --accent-3: {{colors.tertiary.default.hex}};
+    
+    /* Status colors */
+    --online-indicator: {{colors.tertiary.default.hex}};
+    --dnd-indicator: {{colors.error.default.hex}};
+    --idle-indicator: {{colors.tertiary_container.default.hex}};
+}

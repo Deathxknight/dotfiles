@@ -1,0 +1,15 @@
+-- AUTOSTART
+
+hl.on("hyprland.start", function ()
+    hl.exec_cmd("waybar")
+    hl.exec_cmd("/usr/lib/hyprpolkitagent/hyprpolkitagent")
+    hl.exec_cmd("wal -R --cols16")
+    hl.exec_cmd("wl-paste --watch cliphist store")
+    hl.exec_cmd("waywallen-layer-shell --socket $XDG_RUNTIME_DIR/waywallen/display.sock")
+    hl.exec_cmd("waywallen")
+    hl.exec_cmd("clipse -listen")
+    hl.exec_cmd("walker --gapplication-service")
+    hl.exec_cmd("elephant")
+    hl.exec_cmd("~/.config/quickshell/qs.sh")
+    hl.exec_cmd("waywallen-themer")
+end)

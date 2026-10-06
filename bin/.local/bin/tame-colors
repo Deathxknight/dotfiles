@@ -1,0 +1,44 @@
+#!/usr/bin/env python3
+import argparse
+import colorsys
+import re
+import sys
+
+def hex_to_rgb(hex_str):
+    return [int(hex_str[i:i+2], 16) / 255.0 for i in (0, 2, 4)]
+
+def rgb_to_hex(r, g, b):
+    return f"#{int(round(r * 255)):02x}{int(round(g * 255)):02x}{int(round(b * 255)):02x}"
+
+def tame(hex_str, knee=0.8, squash=0.5, max_chroma=0.8):
+    r, g, b = hex_to_rgb(hex_str)
+    h, s, v = colorsys.rgb_to_hsv(r, g, b)
+    if s > knee:
+        s = knee + (s - knee) * squash
+    s = min(s, max_chroma)
+    r_new, g_new, b_new = colorsys.hsv_to_rgb(h, s, v)
+    return rgb_to_hex(r_new, g_new, b_new)
+
+ap = argparse.ArgumentParser()
+ap.add_argument("file")
+ap.add_argument("--knee", type=float, default=0.8)
+ap.add_argument("--squash", type=float, default=0.5)
+ap.add_argument("--max_chroma", type=float, default=0.8)
+ap.add_argument("--skip", default=r"^\s*//|[oO]n[A-Z_]|[Tt]ext|[Ff]g|[Ff]oreground")
+ap.add_argument("--only", default="")
+a = ap.parse_args()
+
+try:
+    with open(a.file, "r") as f:
+        lines = f.read().split("\n")
+    rx = re.compile(r"#([0-9a-fA-F]{6})\b")
+    for i, line in enumerate(lines):
+        if a.skip and re.search(a.skip, line):
+            continue
+        if a.only and not re.search(a.only, line):
+            continue
+        lines[i] = rx.sub(lambda m: tame(m.group(1), a.knee, a.squash, a.max_chroma), line)
+    with open(a.file, "w") as f:
+        f.write("\n".join(lines))
+except Exception as e:
+    sys.exit(0)

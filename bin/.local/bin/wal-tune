@@ -1,0 +1,183 @@
+#!/usr/bin/env python3
+"""wal-tune: make pywal's palette readable AND varied on a dark background.
+
+Reads  ~/.cache/wal/colors.json  (written by `wal`)
+Writes ~/.cache/wal/colors-kitty-tuned.conf  (include it LAST in kitty.conf)
+
+Two things happen:
+  1. SPREAD: pywal only gives you hues that exist in the wallpaper (a pink and
+     blue wallpaper gives pink and blue terminal colours, nothing else). So the
+     six ANSI colours start from a full spread of hues (red, green, yellow,
+     blue, magenta, cyan) and are shifted part of the way toward the
+     wallpaper's tint. Syntax highlighting gets variety; it still looks like
+     your wallpaper.
+  2. CONTRAST: every colour is raised, keeping its hue, until it reaches a
+     target contrast ratio against the background (WCAG formula: 4.5 is
+     comfortable for text, 7 is high contrast).
+
+The background is never touched. If it is light, nothing is changed.
+
+Environment overrides (handy for testing):
+  WAL_TUNE_SPREAD=0        keep pywal's own hues (contrast fix only)
+  WAL_TUNE_INFLUENCE=0.35  0 = pure standard hues, 1 = all hues = wallpaper tint
+"""
+import colorsys
+import json
+import math
+import os
+import sys
+
+CACHE = os.path.expanduser("~/.cache/wal")
+SRC = os.path.join(CACHE, "colors.json")
+OUT = os.path.join(CACHE, "colors-kitty-tuned.conf")
+
+
+def env_float(name, default):
+    try:
+        return float(os.environ[name])
+    except (KeyError, ValueError):
+        return default
+
+
+# tweak to taste
+SPREAD = os.environ.get("WAL_TUNE_SPREAD", "0") != "0"
+INFLUENCE = min(1.0, max(0.0, env_float("WAL_TUNE_INFLUENCE", 0.35)))
+# Standard hues in degrees: slot -> hue (red, green, yellow, blue, magenta, cyan)
+CANON_HUES = {1: 355, 2: 125, 3: 45, 4: 220, 5: 295, 6: 175}
+# Most a colour may drift from its standard hue, in degrees. Keeps green
+# looking green and yellow looking yellow, whatever the wallpaper.
+MAX_SHIFT = env_float("WAL_TUNE_MAX_SHIFT", 30.0)
+CONTRAST_NORMAL = 5.5   # color1-6   (never dimmer than this)
+CONTRAST_BRIGHT = 8.0   # color9-14  (never dimmer than their normal colour)
+CONTRAST_DIM = 4.5      # color8: comments, dim text, fastfetch borders
+MIN_SAT = 0.35          # stops colours from washing out to grey when lifted
+FG_L = 0.90             # default text lightness
+COLOR7_L = 0.82         # "white"
+COLOR15_L = 0.94        # "bright white"
+
+
+def parse(hex_str):
+    h = hex_str.lstrip("#")
+    r, g, b = (int(h[i:i + 2], 16) / 255 for i in (0, 2, 4))
+    return colorsys.rgb_to_hls(r, g, b)  # (hue, lightness, saturation)
+
+
+def fmt(hue, light, sat):
+    light = max(0.0, min(1.0, light))
+    sat = max(0.0, min(1.0, sat))
+    r, g, b = colorsys.hls_to_rgb(hue % 1.0, light, sat)
+    return "#%02x%02x%02x" % (round(r * 255), round(g * 255), round(b * 255))
+
+
+def luminance(hex_str):
+    h = hex_str.lstrip("#")
+    chans = []
+    for i in (0, 2, 4):
+        c = int(h[i:i + 2], 16) / 255
+        chans.append(c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4)
+    return 0.2126 * chans[0] + 0.7152 * chans[1] + 0.0722 * chans[2]
+
+
+def contrast(a, b):
+    la, lb = luminance(a), luminance(b)
+    return (max(la, lb) + 0.05) / (min(la, lb) + 0.05)
+
+
+def lift(hex_str, bg, target, min_s=0.0):
+    """Raise lightness (keeping hue) until contrast against bg reaches target."""
+    hue, light, sat = parse(hex_str)
+    sat = max(sat, min_s)
+    out = fmt(hue, light, sat)
+    while contrast(out, bg) < target and light < 1.0:
+        light = min(1.0, light + 0.01)
+        out = fmt(hue, light, sat)
+    return out
+
+
+def set_light(hex_str, light):
+    """Keep the hue and saturation, force the lightness."""
+    hue, _, sat = parse(hex_str)
+    return fmt(hue, light, sat)
+
+
+def circular_mean(hues, weights):
+    x = sum(w * math.cos(2 * math.pi * h) for h, w in zip(hues, weights))
+    y = sum(w * math.sin(2 * math.pi * h) for h, w in zip(hues, weights))
+    if abs(x) < 1e-9 and abs(y) < 1e-9:
+        return None
+    return (math.atan2(y, x) / (2 * math.pi)) % 1.0
+
+
+def hue_toward(start, target, amount, max_shift):
+    """Move a hue part of the way along the shortest arc toward target (capped)."""
+    delta = ((target - start + 0.5) % 1.0) - 0.5
+    shift = max(-max_shift, min(max_shift, amount * delta))
+    return (start + shift) % 1.0
+
+
+def spread_palette(colors):
+    """Standard hues, nudged toward the wallpaper's tint. Returns slot -> hex."""
+    hues, weights, sats = [], [], []
+    for i in list(range(1, 7)) + list(range(9, 15)):
+        h, l, s = parse(colors[f"color{i}"])
+        if s > 0.15 and 0.05 < l < 0.95:   # ignore greys, they carry no tint
+            hues.append(h)
+            weights.append(s)
+            sats.append(s)
+    tint = circular_mean(hues, weights) if hues else None
+    sat = min(0.85, max(0.5, sum(sats) / len(sats))) if sats else 0.6
+    base = {}
+    for slot, deg in CANON_HUES.items():
+        hue = deg / 360
+        if tint is not None:
+            hue = hue_toward(hue, tint, INFLUENCE, MAX_SHIFT / 360)
+        base[slot] = fmt(hue, 0.5, sat)
+    return base
+
+
+def write(lines):
+    tmp = OUT + ".tmp"
+    with open(tmp, "w") as f:
+        f.write("\n".join(lines) + "\n")
+    os.replace(tmp, OUT)  # atomic, so kitty never reads a half-written file
+
+
+def main():
+    try:
+        with open(SRC) as f:
+            data = json.load(f)
+        colors = data["colors"]
+        foreground = data["special"]["foreground"]
+        bg = data["special"]["background"]
+    except (OSError, ValueError, KeyError) as err:
+        print(f"wal-tune: cannot read {SRC}: {err}", file=sys.stderr)
+        return 1
+
+    if luminance(bg) > 0.5:
+        write(["# wal-tune: light background, nothing to tune"])
+        return 0
+
+    if SPREAD:
+        base = spread_palette(colors)
+        source = {i: base[i] for i in range(1, 7)}
+        source.update({i + 8: base[i] for i in range(1, 7)})
+    else:
+        source = {n: colors[f"color{n}"] for n in list(range(1, 7)) + list(range(9, 15))}
+
+    tuned = {}
+    for i in range(1, 7):
+        tuned[i] = lift(source[i], bg, CONTRAST_NORMAL, MIN_SAT)
+        bright_target = max(CONTRAST_BRIGHT, contrast(tuned[i], bg))
+        tuned[i + 8] = lift(source[i + 8], bg, bright_target, MIN_SAT)
+    tuned[7] = set_light(colors["color7"], COLOR7_L)
+    tuned[15] = set_light(colors["color15"], COLOR15_L)
+    tuned[8] = lift(colors["color8"], bg, CONTRAST_DIM)
+
+    lines = [f"foreground {set_light(foreground, FG_L)}"]
+    lines += [f"color{n} {tuned[n]}" for n in sorted(tuned)]
+    write(lines)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

@@ -1,0 +1,16 @@
+Pill 1.0 Pill.qml
+PText 1.0 PText.qml
+AudioSlider 1.0 AudioSlider.qml
+singleton Colors 1.0 Colors.qml
+singleton BarState 1.0 BarState.qml
+TrayMenu 1.0 TrayMenu.qml
+BlobBackground 1.0 BlobBackground.qml
+Anim 1.0 Anim.qml
+EffectAnim 1.0 EffectAnim.qml
+singleton Theme 1.0 Theme.qml
+
+singleton NotifState 1.0 NotifState.qml
+singleton MatugenColors 1.0 MatugenColors.qml
+singleton BarSettings 1.0 BarSettings.qml
+singleton Palettes 1.0 Palettes.qml
+singleton Rng 1.0 Rng.qml

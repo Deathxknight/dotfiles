@@ -1,0 +1,30 @@
+/*
+* GTK 4 Colors
+* Converted from Matugen template
+*/
+
+:root {
+    --adw-accent-rgb: 162 211 153;
+    --adw-accent-bg-rgb: 162 211 153;
+    --adw-accent-fg-rgb: 12 57 14;
+
+    --adw-window-bg-rgb: 16 20 15;
+    --adw-window-fg-rgb: 224 228 218;
+
+    --adw-headerbar-bg-rgb: 16 20 15;
+    --adw-headerbar-fg-rgb: 224 228 218;
+
+    --adw-popover-bg-rgb: 16 20 15;
+    --adw-popover-fg-rgb: 224 228 218;
+
+    --adw-view-bg-rgb: 16 20 15;
+    --adw-view-fg-rgb: 224 228 218;
+
+    --adw-card-bg-rgb: 16 20 15;
+    --adw-card-fg-rgb: 224 228 218;
+
+    --adw-sidebar-bg-rgb: 16 20 15;
+    --adw-sidebar-fg-rgb: 224 228 218;
+    --adw-sidebar-border-rgb: 16 20 15;
+    --adw-sidebar-backdrop-rgb: 16 20 15;
+}

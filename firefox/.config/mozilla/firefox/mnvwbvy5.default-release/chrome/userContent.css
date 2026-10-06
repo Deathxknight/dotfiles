@@ -1,0 +1,62 @@
+/* --- Matugen Firefox Homepage (darkened primary_container) --- */
+@import "colors.css";
+@import "icons.css";
+
+@-moz-document url("about:home"), url("about:newtab"), url("about:privatebrowsing") {
+
+  html {
+    --newtab-background-color: color-mix(in srgb, var(--primary_container) 15%, var(--background) 85%) !important;
+    --newtab-background-color-secondary: var(--surface_container) !important;
+    --newtab-text-primary-color: var(--on_primary_container) !important;
+    --newtab-primary-action-background: var(--primary) !important;
+    --newtab-border-color: var(--outline) !important;
+    --newtab-primary-element-text-color: var(--on_primary) !important;
+
+    background: color-mix(in srgb, var(--primary_container) 15%, var(--background) 85%) !important;
+    background-image: none !important;
+    background-color: color-mix(in srgb, var(--primary_container) 15%, var(--background) 85%) !important;
+  }
+
+  body {
+    background: color-mix(in srgb, var(--primary_container) 15%, var(--background) 85%) !important;
+    background-image: none !important;
+    color: var(--on_primary_container) !important;
+  }
+
+  body::before, body::after,
+  .outer-wrapper::before, .outer-wrapper::after,
+  .nova-outer-wrapper::before, .nova-outer-wrapper::after {
+    background: none !important;
+    background-image: none !important;
+    opacity: 0 !important;
+  }
+
+  .search-handoff-button,
+  .search-wrapper input {
+    background-color: var(--surface_container) !important;
+    color: var(--on_surface) !important;
+    border: 1px solid var(--outline) !important;
+    backdrop-filter: blur(10px) !important;
+  }
+
+  .top-site-outer .tile {
+    background-color: var(--surface_container) !important;
+    color: var(--on_surface) !important;
+  }
+
+  .top-site-outer .title,
+  .top-site-outer .title span,
+  .section-title,
+  .section-title span {
+    color: var(--on_primary_container) !important;
+  }
+
+  .top-site-outer:hover .tile {
+    background-color: var(--primary) !important;
+    color: var(--on_primary) !important;
+  }
+
+  .logo-and-wordmark .wordmark {
+    fill: var(--primary) !important;
+  }
+}

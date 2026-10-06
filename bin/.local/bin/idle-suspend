@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# only suspends after 22:30, otherwise does nothing
+
+HOUR=$(date +%H)
+MIN=$(date +%M)
+NOW_MIN=$((10#$HOUR * 60 + 10#$MIN))
+CUTOFF=$((22 * 60 + 30))
+
+if [ "$NOW_MIN" -ge "$CUTOFF" ] || [ "$NOW_MIN" -lt $((6 * 60)) ]; then
+    systemctl suspend
+fi

@@ -1,0 +1,3 @@
+theme = "matugen"
+placeholders.default.input = "Search"
+placeholders.default.list  = "Applications"

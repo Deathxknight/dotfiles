@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+if [[ $# -lt 1 ]]; then
+    echo "Usage: $0 <path-to-image>" >&2
+    exit 1
+fi
+
+IMAGE="$(realpath "$1")"
+
+if [[ ! -f "$IMAGE" ]]; then
+    echo "Error: File '$IMAGE' not found." >&2
+    exit 1
+fi
+
+exec walset-backend "$IMAGE"

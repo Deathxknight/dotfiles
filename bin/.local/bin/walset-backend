@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+set -e
+
+[[ $# -ge 1 ]] || { echo "Usage: $0 <absolute-image-path>" >&2; exit 1; }
+
+IMAGE="$1"
+LOG="$HOME/.cache/walset.log"
+
+log() {
+    echo "[walset] $(date '+%H:%M:%S') - $1" >> "$LOG"
+}
+
+log "Running matugen for $IMAGE"
+matugen image "$IMAGE" -m dark --prefer saturation
+
+log "pywal for kitty"
+wal -i "$IMAGE" -n -t -e -s -q || true
+wal-tune || true
+pkill -SIGUSR1 kitty || true
+
+log "Reloading GUI themes"
+
+log "Recoloring cursor"
+"$HOME/.local/bin/recolor-cursor.sh" >> "$LOG" 2>&1 &
+
+log "Done"

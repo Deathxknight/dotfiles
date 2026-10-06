@@ -1,0 +1,51 @@
+/* ~/.config/matugenfox/sites/youtube.css */
+@-moz-document domain("youtube.com") {
+
+    /* Base page */
+    html, body {
+        background-color: var(--background) !important;
+        color: var(--on_background) !important;
+    }
+
+    /* Header / top bar */
+    ytd-masthead, #masthead-container, #container.ytd-masthead {
+        background-color: var(--surface_container) !important;
+        color: var(--on_surface) !important;
+    }
+
+    /* Sidebar */
+    ytd-guide-renderer, #guide-content, tp-yt-app-drawer {
+        background-color: var(--surface_container) !important;
+        color: var(--on_surface) !important;
+    }
+
+    /* Video cards / thumbnails area */
+    ytd-rich-grid-media, ytd-video-renderer, ytd-compact-video-renderer {
+        background-color: var(--surface) !important;
+    }
+
+    /* Search bar */
+    input#search, ytd-searchbox #container {
+        background-color: var(--surface_container) !important;
+        color: var(--on_surface) !important;
+    }
+
+    /* Text */
+    #video-title, .ytd-video-renderer #video-title, a {
+        color: var(--on_background) !important;
+    }
+
+    /* Hovered / selected states */
+    a:hover, ytd-guide-entry-renderer[active] {
+        background-color: var(--primary_container) !important;
+        color: var(--on_primary_container) !important;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+        background: var(--background);
+    }
+    ::-webkit-scrollbar-thumb {
+        background: var(--outline);
+    }
+}

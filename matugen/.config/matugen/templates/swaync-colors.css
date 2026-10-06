@@ -1,0 +1,26 @@
+/*
+* Swaync Colors - matugen output with pywal compatibility aliases
+* Generated with Matugen
+*/
+<* for name, value in colors *>
+@define-color {{name}} {{value.default.hex}};
+<* endfor *>
+
+/* --- pywal-compatible aliases for swaync's old theme --- */
+@define-color foreground    @on_surface;
+@define-color color0        @surface;
+@define-color color1        @primary;
+@define-color color2        @error;
+@define-color color3        @tertiary;
+@define-color color4        @secondary;
+@define-color color5        @primary_container;
+@define-color color6        @tertiary_container;
+@define-color color7        @on_surface;
+@define-color color8        @surface_variant;
+@define-color color9        @error_container;
+@define-color color10       @tertiary_container;
+@define-color color11       @secondary_container;
+@define-color color12       @primary_container;
+@define-color color13       @on_secondary_fixed_variant;
+@define-color color14       @on_tertiary_fixed_variant;
+@define-color color15       @on_surface_variant;

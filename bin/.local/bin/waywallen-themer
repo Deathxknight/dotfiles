@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+# re-theme when waywallen last_wallpaper changes
+set -euo pipefail
+
+APP="$HOME/.local/share/waywallen"
+CONFIG="$HOME/.config/waywallen/config.toml"
+DB="$APP/waywallen-v2.db"
+THEMER="${THEMER:-$HOME/.local/bin/walset-backend}"
+CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/waywallen-themer"
+POLL="${POLL:-2}"
+
+mkdir -p "$CACHE"
+log() { printf '[waywallen-themer] %s\n' "$*"; }
+
+get_id() {
+  grep -oP '^last_wallpaper\s*=\s*"\K[^"]+' "$CONFIG" 2>/dev/null | head -1
+}
+
+lookup() {
+  sqlite3 -separator '|' "$DB" "
+    SELECT i.type,
+      CASE WHEN substr(i.path,1,1)='/' THEN i.path
+           ELSE l.path || '/' || i.path END,
+      CASE WHEN i.preview_path IS NULL OR i.preview_path='' THEN ''
+           WHEN substr(i.preview_path,1,1)='/' THEN i.preview_path
+           ELSE l.path || '/' || i.preview_path END
+    FROM item i JOIN library l ON l.id=i.library_id
+    WHERE i.id = $1;"
+}
+
+deanimate() {
+  local src="$1" id="$2" out
+  case "${src,,}" in
+    *.gif|*.webp|*.apng)
+      out="$CACHE/${id}.png"
+      if [[ ! -f "$out" || "$src" -nt "$out" ]]; then
+        log "frame 0: $src -> $out"
+        if command -v magick >/dev/null; then
+          magick "${src}[0]" -strip "$out"
+        elif command -v convert >/dev/null; then
+          convert "${src}[0]" -strip "$out"
+        else
+          log "no magick/convert; using raw $src"
+          out="$src"
+        fi
+      fi
+      printf '%s' "$out" ;;
+    *) printf '%s' "$src" ;;
+  esac
+}
+
+last_id=$(get_id)
+log "watching (initial id=$last_id)"
+
+while sleep "$POLL"; do
+  id=$(get_id)
+  [[ -z "$id" || "$id" == "$last_id" ]] && continue
+  last_id="$id"
+
+  row=$(lookup "$id") || { log "lookup failed id=$id"; continue; }
+  IFS='|' read -r type path preview <<<"$row"
+
+  case "$type" in
+    image)           img="$path" ;;
+    video|scene|web|*)
+      if [[ -n "$preview" && -f "$preview" ]]; then
+        img=$(deanimate "$preview" "$id")
+      else
+        log "id=$id type=$type no preview, skipping"
+        continue
+      fi ;;
+  esac
+
+  [[ -f "$img" ]] || { log "missing image: $img"; continue; }
+  log "theming id=$id type=$type img=$img"
+
+  # matugen + everything else
+   "$THEMER" "$img" || log "walset-backend failed for $img, continuing to watch"
+
+done

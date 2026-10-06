@@ -1,0 +1,116 @@
+[config]
+
+[config.custom_colors]
+red     = { color = "#e06c75", blend = true }
+green   = { color = "#98c379", blend = true }
+yellow  = { color = "#e5c07b", blend = true }
+blue    = { color = "#61afef", blend = true }
+magenta = { color = "#c678dd", blend = true }
+cyan    = { color = "#56b6c2", blend = true }
+
+[templates.gtk3]
+input_path = '~/.config/matugen/templates/gtk-colors.css'
+output_path = '~/.config/gtk-3.0/colors.css'
+
+[templates.gtk4]
+input_path = '~/.config/matugen/templates/gtk-colors.css'
+output_path = '~/.config/gtk-4.0/colors.css'
+
+[templates.kitty]
+input_path = '~/.config/matugen/templates/kitty-colors.conf'
+output_path = '~/.config/kitty/colors.conf'
+post_hook = 'pkill -SIGUSR1 kitty'
+
+[templates.hyprland]
+input_path = '~/.config/matugen/templates/hyprland-colors.lua'
+output_path = '~/.cache/matugen/hypr-colors.lua'
+
+#[templates.swaync]
+#input_path = '~/.config/matugen/templates/swaync-colors.css'
+#output_path = '~/.cache/matugen/swaync-colors.css'
+#post_hook = 'swaync-client -rs'
+
+[templates.qt5ct]
+input_path = '~/.config/matugen/templates/qt-colors.conf'
+output_path = '~/.config/qt5ct/colors/matugen.conf'
+
+[templates.qt6ct]
+input_path = '~/.config/matugen/templates/qt-colors.conf'
+output_path = '~/.config/qt6ct/colors/matugen.conf'
+
+[templates.obs]
+input_path = '~/.config/matugen/templates/obs.obt'
+output_path = '~/.var/app/com.obsproject.Studio/config/obs-studio/themes/matugen.obt'
+
+[templates.papirus-folders]
+input_path = '~/.config/matugen/templates/papirus-color'
+output_path = '~/.cache/matugen/papirus-folder-color'
+colors_to_compare = [
+    { name = "black",      color = "#4f4f4f" },
+    { name = "blue",       color = "#5294e2" },
+    { name = "bluegrey",   color = "#607d8b" },
+    { name = "brown",      color = "#ae8e6c" },
+    { name = "carmine",    color = "#a30002" },
+    { name = "cyan",       color = "#00bcd4" },
+    { name = "darkcyan",   color = "#45abb7" },
+    { name = "deeporange", color = "#eb6637" },
+    { name = "green",      color = "#87b158" },
+    { name = "grey",       color = "#8e8e8e" },
+    { name = "indigo",     color = "#5c6bc0" },
+    { name = "magenta",    color = "#ca71df" },
+    { name = "nordic",     color = "#81a1c1" },
+    { name = "orange",     color = "#ee923a" },
+    { name = "palebrown",  color = "#d1bfae" },
+    { name = "paleorange", color = "#eeca8f" },
+    { name = "pink",       color = "#f06292" },
+    { name = "red",        color = "#e25252" },
+    { name = "teal",       color = "#16a085" },
+    { name = "violet",     color = "#7e57c2" },
+    { name = "white",      color = "#e4e4e4" },
+    { name = "yaru",       color = "#676767" },
+    { name = "yellow",     color = "#f9bd30" },
+]
+compare_to = "{{ colors.primary.default.hex }}"
+post_hook = 'nohup sudo -n papirus-folders -C {{ closest_color }} -u --theme Papirus-Dark >/dev/null 2>&1 &'
+index = 1
+
+[templates.steam]
+input_path = '~/.config/matugen/templates/steam.css'
+output_path = '~/.config/AdwSteamGtk/custom.css'
+post_hook = "nohup adwaita-steam-gtk -i -o 'custom_css:true' >/dev/null 2>&1 &"
+
+[templates.walker]
+input_path  = '~/.config/matugen/templates/walker-style.css'
+output_path = '~/.config/walker/themes/matugen/style.css'
+
+[templates.firefox_colors]
+input_path = '~/.config/matugen/templates/firefox-colors.css'
+output_path = '~/.config/mozilla/firefox/mnvwbvy5.default-release/chrome/colors.css'
+
+[templates.firefox_websites]
+input_path = '~/.config/matugen/templates/firefox_websites.css'
+output_path = '~/.config/matugen/generated/firefox_websites.css'
+
+[templates.nvim_vimscript]
+input_path = '~/.config/matugen/templates/nvim-vimscript.vim'
+output_path = '~/.config/nvim/plugin/matugen-colors.vim'
+post_hook = "pkill -SIGUSR1 nvim || true"
+
+[templates.vesktop]
+input_path = '~/.config/matugen/templates/vesktop.css'
+output_path = '~/.config/vesktop/themes/matugen.theme.css'
+
+[templates.cursor_theme]
+input_path = '~/.config/matugen/templates/cursor-trigger.txt'
+output_path = '/tmp/matugen-cursor-trigger.txt'
+post_hook = 'nohup ~/.local/bin/recolor-cursor.sh >/dev/null 2>&1 &'
+
+#[templates.quickshell]
+#input_path = "~/.config/matugen/templates/quickshell-colors.qml"
+#output_path = "~/.config/quickshell/bar/components/MatugenColors.qml"
+#post_hook = "pkill -USR1 quickshell 2>/dev/null || true"
+
+[templates.quickshell]
+input_path = "~/.config/matugen/templates/quickshell-colors.qml"
+output_path = "~/.config/quickshell/bar/components/MatugenColors.qml"
+post_hook = "~/.local/bin/tame-colors ~/.config/quickshell/bar/components/MatugenColors.qml"

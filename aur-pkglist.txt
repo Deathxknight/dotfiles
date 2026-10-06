@@ -1,0 +1,10 @@
+adwsteamgtk
+clipse
+elephant
+matugen-bin
+papirus-folders
+python-pywal16
+vesktop
+walker
+waywallen-bin
+waywallen-display
