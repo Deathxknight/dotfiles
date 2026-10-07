@@ -15,7 +15,7 @@ Item {
     property real speed: 1.0
     property real barRadius: 20
 
-    readonly property int count: 20
+    readonly property int count: Math.min(100, Math.round(20 * BarSettings.effectDensity))
     property var parts: []
     property bool inited: false
 
@@ -45,7 +45,7 @@ Item {
 
     Component.onCompleted: {
         const a = []
-        for (let i = 0; i < count; i++) {
+        for (let i = 0; i < 100; i++) {
             const p = {}
             reset(p, true)
             a.push(p)

@@ -210,10 +210,17 @@ Rectangle {
             }
             SliderRow {
                 Layout.fillWidth: true
+                label: "Effect amount"
+                readout: Math.round(BarSettings.effectDensity * 100) + "%"
+                value: Math.max(0, Math.min(1, Math.log(BarSettings.effectDensity / 0.25) / Math.log(16)))
+                onMoved: (v) => BarSettings.effectDensity = 0.25 * Math.pow(16, Math.max(0, Math.min(1, v)))
+            }
+            SliderRow {
+                Layout.fillWidth: true
                 label: "Effect speed"
                 readout: Math.round(BarSettings.effectSpeed * 100) + "%"
-                value: (BarSettings.effectSpeed - 0.25) / 2.75
-                onMoved: (v) => BarSettings.effectSpeed = Math.max(0.25, Math.min(3, 0.25 + v * 2.75))
+                value: Math.max(0, Math.min(1, Math.log(BarSettings.effectSpeed / 0.25) / Math.log(16)))
+                onMoved: (v) => BarSettings.effectSpeed = 0.25 * Math.pow(16, Math.max(0, Math.min(1, v)))
             }
         }
     }

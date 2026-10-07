@@ -18,15 +18,18 @@ Item {
     visible: enabled
 
     Repeater {
-        model: root.enabled ? 22 : 0
+        model: root.enabled ? Math.round(22 * BarSettings.effectDensity) : 0
 
         delegate: Item {
+            id: drop
             required property int index
             readonly property real len: 8 + Rng.rand(index * 3 + 1) * 10
-            readonly property real dur: (900 + Rng.rand(index * 3 + 3) * 900) / root.speed
-            readonly property real colX: Rng.rand(index * 3 + 2) * root.width
+            // px/s: the original fall (40px bar) over its original duration
+            readonly property real vy: (40 + 2 * len) / ((900 + Rng.rand(index * 3 + 3) * 900) / 1000)
+            property real wait: Rng.rand(index * 3 + 4) * 0.6
 
-            x: colX
+            x: Rng.rand(index * 3 + 2) * root.width
+            y: -len
             width: 1
             height: len
 
@@ -36,16 +39,18 @@ Item {
                 opacity: 0.35 * root.intensity
             }
 
-            SequentialAnimation on y {
+            FrameAnimation {
                 running: root.enabled
-                loops: Animation.Infinite
-                NumberAnimation {
-                    from: -len
-                    to: root.height + len
-                    duration: dur
-                    easing.type: Easing.Linear
+                onTriggered: {
+                    const dt = Math.min(frameTime, 0.05)
+                    if (drop.wait > 0) { drop.wait -= dt * root.speed; return }
+                    drop.y += drop.vy * dt * root.speed
+                    if (drop.y > root.height + drop.len) {
+                        const shrunk = drop.y > root.height + drop.len + 30
+                        drop.y = shrunk ? Math.random() * root.height - drop.len : -drop.len
+                        drop.wait = shrunk ? 0 : Rng.rand(drop.index * 3 + 4) * 0.6
+                    }
                 }
-                PauseAnimation { duration: Rng.rand(index * 3 + 4) * 600 }
             }
         }
     }

@@ -23,6 +23,7 @@ Singleton {
     property bool anyHovered: false
     property bool popupHovered: false
     property bool mediaPopupOpen: false
+    property bool popupEffects: true
     property var trayMenuHandle: null
 
     PwObjectTracker {

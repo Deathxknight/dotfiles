@@ -41,6 +41,8 @@ ShellRoot {
             }
 
 
+            HoverHandler { id: panelHover }
+
             HyprlandFocusGrab {
                 active: !!(popoutsLoader.item && (popoutsLoader.item.currentPopout === "tray" || popoutsLoader.item.currentPopout === "settings" || popoutsLoader.item.sticky))
                 windows: [panel]
@@ -66,16 +68,37 @@ ShellRoot {
                 popupScale: popoutsLoader.item ? popoutsLoader.item.offsetScale : 1
             }
 
+            BlobBackground {
+                id: blobMask
+                anchors.fill: parent
+                visible: false
+                layer.enabled: BarState.popupEffects
+                barHeight: 40
+                barRadius: 20
+                popupRadius: 24
+                blobSmoothing: 48
+                blobColor: "white"
+                opacity: 1.0
+
+                mergeOverlap: popoutsLoader.item ? popoutsLoader.item.overlap : 0
+                popupCenterX: popoutsLoader.item ? popoutsLoader.item.popupCenterX : 0
+                popupWidth: popoutsLoader.item ? popoutsLoader.item.popupWidth : 0
+                popupFullHeight: popoutsLoader.item ? popoutsLoader.item.animHeight : 0
+                popupScale: popoutsLoader.item ? popoutsLoader.item.offsetScale : 1
+            }
+
             Effects {
                 id: effectsLayer
                 anchors.top: parent.top
                 anchors.left: parent.left
                 anchors.right: parent.right
-                height: 40
+                height: BarState.popupEffects ? parent.height : 40
+                customMask: BarState.popupEffects ? blobMask : null
+                contentHeight: (BarState.popupEffects && popoutsLoader.item) ? 40 + popoutsLoader.item.popupHeight : 40
                 radius: 20
 
-                barMouseX: barItem.cursorInside ? barItem.cursorX : -300
-                barMouseY: barItem.cursorInside ? barItem.cursorY : -300
+                barMouseX: panelHover.hovered ? panelHover.point.position.x : -300
+                barMouseY: panelHover.hovered ? panelHover.point.position.y : -300
 
                 audioLevel: audio.level
                 bass: audio.bass

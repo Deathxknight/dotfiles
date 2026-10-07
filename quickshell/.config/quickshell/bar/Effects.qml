@@ -6,6 +6,15 @@ Item {
     id: root
 
     property real radius: 20
+    property Item customMask: null
+    property real contentHeight: 40
+
+    property bool fxReload: false
+    Timer { id: fxReloadTimer; interval: 200; onTriggered: root.fxReload = false }
+    Connections {
+        target: BarSettings
+        function onEffectSpeedChanged() { root.fxReload = true; fxReloadTimer.restart() }
+    }
 
     property real barMouseX: -300
     property real barMouseY: -300
@@ -51,7 +60,7 @@ Item {
         layer.enabled: true
         layer.effect: MultiEffect {
             maskEnabled: true
-            maskSource: maskItem
+            maskSource: root.customMask ? root.customMask : maskItem
             maskThresholdMin: 0.5
             maskSpreadAtMin: 1.0
         }
@@ -62,14 +71,18 @@ Item {
             delegate: Loader {
                 id: fxLoader
                 required property var modelData
-                anchors.fill: parent
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.right: parent.right
+                height: root.contentHeight
                 source: "components/effects/" + modelData.file
-                active: true
+                active: !root.fxReload
                 asynchronous: false
 
                 onLoaded: {
                     if (!item) return
                     item.barRadius = root.radius
+                    item.height = Qt.binding(() => root.contentHeight)
                     if (modelData.def !== undefined && item.fxDefault === undefined)
                         item.fxDefault = modelData.def
                     BarSettings.registerEffect(modelData.id, modelData.def === true)

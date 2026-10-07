@@ -39,7 +39,7 @@ Item {
             if (p.life > 0) continue
             const dir = Math.random() < 0.5 ? -1 : 1
             p.x = width * (0.35 + Math.random() * 0.3)
-            p.y = height * (0.3 + Math.random() * 0.4)
+            p.y = Math.min(height, 40) * (0.3 + Math.random() * 0.4)
             p.vx = dir * (80 + Math.random() * 320)
             p.vy = -10 - Math.random() * 60
             p.life = 1.0

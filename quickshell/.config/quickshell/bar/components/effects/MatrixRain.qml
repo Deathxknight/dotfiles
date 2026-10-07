@@ -20,15 +20,17 @@ Item {
     readonly property string glyphs: "ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎ0123456789"
 
     Repeater {
-        model: root.enabled ? 20 : 0
+        model: root.enabled ? Math.round(20 * BarSettings.effectDensity) : 0
 
         delegate: Text {
+            id: col
             required property int index
-            readonly property real colX: Rng.rand(index * 17 + 1) * root.width
-            readonly property real dur: (3500 + Rng.rand(index * 17 + 3) * 3000) / root.speed
             readonly property real ch: 10 + Rng.rand(index * 17 + 4) * 4
+            readonly property real vy: 80 / ((3500 + Rng.rand(index * 17 + 3) * 3000) / 1000)
+            property real wait: Rng.rand(index * 17 + 5) * 1.2
 
-            x: colX
+            x: Rng.rand(index * 17 + 1) * root.width
+            y: -height
             width: 14
             text: {
                 let s = ""
@@ -44,16 +46,18 @@ Item {
             opacity: 0.35 * root.intensity
             lineHeight: 0.85
 
-            SequentialAnimation on y {
+            FrameAnimation {
                 running: root.enabled
-                loops: Animation.Infinite
-                NumberAnimation {
-                    from: -root.height
-                    to: root.height
-                    duration: dur
-                    easing.type: Easing.Linear
+                onTriggered: {
+                    const dt = Math.min(frameTime, 0.05)
+                    if (col.wait > 0) { col.wait -= dt * root.speed; return }
+                    col.y += col.vy * dt * root.speed
+                    if (col.y > root.height) {
+                        const shrunk = col.y > root.height + 30
+                        col.y = shrunk ? Math.random() * root.height - col.height : -col.height
+                        col.wait = shrunk ? 0 : Rng.rand(col.index * 17 + 5) * 1.2
+                    }
                 }
-                PauseAnimation { duration: Rng.rand(index * 17 + 5) * 1200 }
             }
         }
     }

@@ -18,42 +18,46 @@ Item {
     visible: enabled
 
     Repeater {
-        model: root.enabled ? 18 : 0
+        model: root.enabled ? Math.round(18 * BarSettings.effectDensity) : 0
 
         delegate: Rectangle {
+            id: bub
             required property int index
             readonly property real size: 3 + Rng.rand(index * 13 + 1) * 8
-            readonly property real dur: (6000 + Rng.rand(index * 13 + 3) * 5000) / root.speed
-            readonly property real colX: Rng.rand(index * 13 + 2) * root.width
+            readonly property real vy: (40 + 2 * size) / ((6000 + Rng.rand(index * 13 + 3) * 5000) / 1000)
 
-            x: colX
+            property real py: root.height + size
+            property real wait: Rng.rand(index * 13 + 4) * 0.8
+            // 0 at the bottom, 1 at the top of the current visible height
+            readonly property real prog: (root.height + size - py) / (root.height + 2 * size)
+
+            x: Rng.rand(index * 13 + 2) * root.width
+            y: py
             width: size
             height: size
             radius: size / 2
             color: Colors.secondary
-            opacity: 0.0
-
             border.width: 1
             border.color: Colors.on_surface
+            opacity: 0.35 * root.intensity * Math.max(0, Math.min(1, prog / 0.15, (1 - prog) / 0.15))
 
-            SequentialAnimation on y {
+            FrameAnimation {
                 running: root.enabled
-                loops: Animation.Infinite
-                NumberAnimation {
-                    from: root.height + size
-                    to: -size
-                    duration: dur
-                    easing.type: Easing.Linear
+                onTriggered: {
+                    const dt = Math.min(frameTime, 0.05)
+                    if (bub.wait > 0) {
+                        bub.wait -= dt * root.speed
+                        bub.py = root.height + bub.size
+                        return
+                    }
+                    bub.py -= bub.vy * dt * root.speed
+                    if (bub.py < -bub.size) {
+                        bub.py = root.height + bub.size
+                        bub.wait = Rng.rand(bub.index * 13 + 4) * 0.8
+                    } else if (bub.py > root.height + bub.size) {
+                        bub.py = root.height + bub.size
+                    }
                 }
-                PauseAnimation { duration: Rng.rand(index * 13 + 4) * 800 }
-            }
-
-            SequentialAnimation on opacity {
-                running: root.enabled
-                loops: Animation.Infinite
-                NumberAnimation { to: 0.35 * root.intensity; duration: dur * 0.15; easing.type: Easing.OutCubic }
-                PauseAnimation { duration: dur * 0.7 }
-                NumberAnimation { to: 0.0; duration: dur * 0.15; easing.type: Easing.InCubic }
             }
         }
     }

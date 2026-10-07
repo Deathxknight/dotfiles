@@ -12,6 +12,7 @@ Singleton {
     property alias transparent: adapter.transparent
     property alias effectIntensity: adapter.effectIntensity
     property alias effectSpeed: adapter.effectSpeed
+    property alias effectDensity: adapter.effectDensity
     property alias effectStates: adapter.effectStates
 
     property var effectDefaults: ({})
@@ -66,6 +67,7 @@ Singleton {
             property bool transparent: false
             property real effectIntensity: 1.0
             property real effectSpeed: 1.0
+            property real effectDensity: 1.0
             property var effectStates: ({})
         }
     }
