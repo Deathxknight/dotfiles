@@ -4,27 +4,27 @@
 */
 
 :root {
-    --adw-accent-rgb: 162 211 153;
-    --adw-accent-bg-rgb: 162 211 153;
-    --adw-accent-fg-rgb: 12 57 14;
+    --adw-accent-rgb: 255 183 131;
+    --adw-accent-bg-rgb: 255 183 131;
+    --adw-accent-fg-rgb: 79 37 0;
 
-    --adw-window-bg-rgb: 16 20 15;
-    --adw-window-fg-rgb: 224 228 218;
+    --adw-window-bg-rgb: 25 18 13;
+    --adw-window-fg-rgb: 240 223 214;
 
-    --adw-headerbar-bg-rgb: 16 20 15;
-    --adw-headerbar-fg-rgb: 224 228 218;
+    --adw-headerbar-bg-rgb: 25 18 13;
+    --adw-headerbar-fg-rgb: 240 223 214;
 
-    --adw-popover-bg-rgb: 16 20 15;
-    --adw-popover-fg-rgb: 224 228 218;
+    --adw-popover-bg-rgb: 25 18 13;
+    --adw-popover-fg-rgb: 240 223 214;
 
-    --adw-view-bg-rgb: 16 20 15;
-    --adw-view-fg-rgb: 224 228 218;
+    --adw-view-bg-rgb: 25 18 13;
+    --adw-view-fg-rgb: 240 223 214;
 
-    --adw-card-bg-rgb: 16 20 15;
-    --adw-card-fg-rgb: 224 228 218;
+    --adw-card-bg-rgb: 25 18 13;
+    --adw-card-fg-rgb: 240 223 214;
 
-    --adw-sidebar-bg-rgb: 16 20 15;
-    --adw-sidebar-fg-rgb: 224 228 218;
-    --adw-sidebar-border-rgb: 16 20 15;
-    --adw-sidebar-backdrop-rgb: 16 20 15;
+    --adw-sidebar-bg-rgb: 25 18 13;
+    --adw-sidebar-fg-rgb: 240 223 214;
+    --adw-sidebar-border-rgb: 25 18 13;
+    --adw-sidebar-backdrop-rgb: 25 18 13;
 }

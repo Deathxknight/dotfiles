@@ -1,8 +1,8 @@
 /* walker theme, matugen colors */
 
-@define-color window_bg_color   #10140f;
-@define-color accent_bg_color   #a2d399;
-@define-color theme_fg_color    #e0e4da;
+@define-color window_bg_color   #19120d;
+@define-color accent_bg_color   #ffb783;
+@define-color theme_fg_color    #f0dfd6;
 @define-color error_bg_color    #ffb4ab;
 @define-color error_fg_color    #690005;
 

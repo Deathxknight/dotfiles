@@ -44,7 +44,7 @@ ShellRoot {
             HoverHandler { id: panelHover }
 
             HyprlandFocusGrab {
-                active: !!(popoutsLoader.item && (popoutsLoader.item.currentPopout === "tray" || popoutsLoader.item.currentPopout === "settings" || popoutsLoader.item.sticky))
+                active: !!(popoutsLoader.item && (popoutsLoader.item.currentPopout === "tray" || popoutsLoader.item.sticky))
                 windows: [panel]
                 onCleared: {
                     if (popoutsLoader.item) popoutsLoader.item.currentPopout = ""

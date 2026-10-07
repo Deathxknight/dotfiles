@@ -32,6 +32,11 @@ Item {
     property string hoverTarget: ""
 
     function hoverEnterPill(name, item) {
+        if (name === "settings") {
+            hoverOpenTimer.stop()
+            BarState.pendingPopout = ""
+            return
+        }
         BarState.pendingPopout = name
         const c = item.mapToItem(root, item.width / 2, 0)
         root.popouts.anchorX = c.x
@@ -60,6 +65,7 @@ Item {
         else if (hitPill(clipPill, p)) { t = "clip"; item = clipPill }
         else if (hitPill(volumePill, p)) { t = "audio"; item = volumePill }
         else if (hitPill(mediaPill, p)) { t = "media"; item = mediaPill }
+        else if (hitPill(settingsPill, p)) { t = "settings"; item = settingsPill }
         if (t === root.hoverTarget) return
         root.hoverTarget = t
         if (t === "") root.hoverLeavePill()
@@ -98,10 +104,10 @@ Item {
 
     Timer {
         id: hoverCloseTimer
-        interval: 250
+        interval: root.popouts && root.popouts.currentPopout === "settings" ? 400 : 250
         repeat: false
         onTriggered: {
-            const keep = ["tray", "settings"]
+            const keep = ["tray"]
             const popHovered = root.popouts ? root.popouts.popoutHovered : false
             if (!popHovered && root.hoverTarget === "" && root.popouts.currentPopout !== "" && keep.indexOf(root.popouts.currentPopout) === -1) {
                 root.popouts.currentPopout = ""
